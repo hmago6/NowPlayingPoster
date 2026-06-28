@@ -1,0 +1,2 @@
+# NowPlayingPoster
+Windows版iTunesの再生曲をXへ投稿するツール
