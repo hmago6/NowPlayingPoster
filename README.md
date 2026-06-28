@@ -1,4 +1,4 @@
-# NowPlaying Poster
+# NowPlayingPoster
 
 Windows版 iTunes で現在再生中の曲情報を取得し、X (旧Twitter) への投稿を支援するデスクトップアプリケーションです。
 
