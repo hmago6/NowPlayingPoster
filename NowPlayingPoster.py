@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------
-# NowPlaying Poster v1.0.0 (2026-06-28)
+# NowPlayingPoster v1.1.0 (2026-07-05)
 #
 # Windows版iTunesで現在再生中の曲情報を取得し、
 # X (旧Twitter) への投稿を支援するデスクトップアプリケーション
@@ -14,7 +14,15 @@
 # Version History
 # v1.0.0 (2026-06-28)
 # - 初版公開
+#
+# v1.1.0 (2026-07-05)
+# - ウィンドウ位置保存機能を追加
+# - 起動時に前回終了位置へ復元する機能を追加
+# - 保存位置が画面外の場合の補正機能を追加
+# - 「常に手前に表示」チェックボックスを追加
+# - 画面設定を setting.json に保存するよう変更
 # ----------------------------------------------------------------------
+
 import json
 import sys
 import tkinter as tk
@@ -27,7 +35,11 @@ import win32com.client
 
 
 STATE_FILE = Path("state.json")
+SETTING_FILE = Path("setting.json")
 ICON_FILE = "NowPlayingPoster.ico"
+
+WINDOW_WIDTH = 420
+WINDOW_HEIGHT = 195
 
 
 def resource_path(relative_path):
@@ -47,11 +59,25 @@ class NowPlayingGUI:
 
         self.root = root
 
-        root.title("NowPlaying Poster")
-        root.geometry("420x170")
+        self.state = self.load_state()
+        self.setting = self.load_setting()
+
+        root.title("NowPlayingPoster")
+
+        self.set_initial_geometry()
+
         root.resizable(False, False)
 
         root.protocol("WM_DELETE_WINDOW", self.close_app)
+
+        self.topmost_var = tk.BooleanVar(
+            value=self.setting["topmost"]
+        )
+
+        root.attributes(
+            "-topmost",
+            self.topmost_var.get()
+        )
 
         # タイトルバー左上のアイコンを設定
         icon_path = resource_path(ICON_FILE)
@@ -68,8 +94,6 @@ class NowPlayingGUI:
             "iTunes.Application"
         )
 
-        self.state = self.load_state()
-
         self.last_track = self.state["last_track"]
         self.last_album = self.state["last_album"]
 
@@ -85,6 +109,15 @@ class NowPlayingGUI:
             padx=8,
             pady=(8, 4),
             fill="both"
+        )
+
+        tk.Checkbutton(
+            root,
+            text="常に手前に表示",
+            variable=self.topmost_var,
+            command=self.toggle_topmost
+        ).pack(
+            pady=(0, 2)
         )
 
         button_frame = tk.Frame(root)
@@ -152,6 +185,124 @@ class NowPlayingGUI:
                 ensure_ascii=False,
                 indent=2
             )
+
+    # --------------------------
+    # setting管理
+    # --------------------------
+
+    def load_setting(self):
+
+        if SETTING_FILE.exists():
+
+            with open(
+                SETTING_FILE,
+                "r",
+                encoding="utf-8"
+            ) as f:
+
+                setting = json.load(f)
+
+            return {
+                "window_x": setting.get("window_x"),
+                "window_y": setting.get("window_y"),
+                "topmost": setting.get("topmost", False)
+            }
+
+        return {
+            "window_x": None,
+            "window_y": None,
+            "topmost": False
+        }
+
+    def save_setting(self):
+
+        self.setting["window_x"] = self.root.winfo_x()
+        self.setting["window_y"] = self.root.winfo_y()
+        self.setting["topmost"] = self.topmost_var.get()
+
+        with open(
+            SETTING_FILE,
+            "w",
+            encoding="utf-8"
+        ) as f:
+
+            json.dump(
+                self.setting,
+                f,
+                ensure_ascii=False,
+                indent=2
+            )
+
+    # --------------------------
+    # ウィンドウ位置
+    # --------------------------
+
+    def set_initial_geometry(self):
+
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+
+        x = self.setting.get("window_x")
+        y = self.setting.get("window_y")
+
+        if x is None or y is None:
+
+            x = (screen_width - WINDOW_WIDTH) // 2
+            y = (screen_height - WINDOW_HEIGHT) // 2
+
+        else:
+
+            x, y = self.safe_window_position(
+                x,
+                y,
+                screen_width,
+                screen_height
+            )
+
+        self.root.geometry(
+            f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{x}+{y}"
+        )
+
+    def safe_window_position(
+        self,
+        x,
+        y,
+        screen_width,
+        screen_height
+    ):
+
+        if x < 0:
+            x = 0
+
+        if y < 0:
+            y = 0
+
+        if x + WINDOW_WIDTH > screen_width:
+            x = screen_width - WINDOW_WIDTH
+
+        if y + WINDOW_HEIGHT > screen_height:
+            y = screen_height - WINDOW_HEIGHT
+
+        if x < 0:
+            x = 0
+
+        if y < 0:
+            y = 0
+
+        return x, y
+
+    # --------------------------
+    # 常に手前に表示
+    # --------------------------
+
+    def toggle_topmost(self):
+
+        self.root.attributes(
+            "-topmost",
+            self.topmost_var.get()
+        )
+
+        self.setting["topmost"] = self.topmost_var.get()
 
     # --------------------------
     # 投稿文保存
@@ -371,10 +522,11 @@ class NowPlayingGUI:
 
         result = messagebox.askyesno(
             "終了確認",
-            "NowPlaying Posterを終了します。\nよろしいですか？"
+            "NowPlayingPosterを終了します。\nよろしいですか？"
         )
 
         if result:
+            self.save_setting()
             self.root.destroy()
 
 
