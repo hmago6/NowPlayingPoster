@@ -21,6 +21,9 @@
 # - 保存位置が画面外の場合の補正機能を追加
 # - 「常に手前に表示」チェックボックスを追加
 # - 画面設定を setting.json に保存するよう変更
+#
+# v1.1.1 (2026-07-05)
+# - チェックボックスの位置を調整
 # ----------------------------------------------------------------------
 
 import json
@@ -39,7 +42,7 @@ SETTING_FILE = Path("setting.json")
 ICON_FILE = "NowPlayingPoster.ico"
 
 WINDOW_WIDTH = 420
-WINDOW_HEIGHT = 195
+WINDOW_HEIGHT = 160
 
 
 def resource_path(relative_path):
@@ -117,6 +120,8 @@ class NowPlayingGUI:
             variable=self.topmost_var,
             command=self.toggle_topmost
         ).pack(
+            anchor="w",
+            padx=8,
             pady=(0, 2)
         )
 
