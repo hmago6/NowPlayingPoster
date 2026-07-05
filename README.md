@@ -2,6 +2,7 @@
 
 NowPlaying Poster は、Windows版 iTunes の現在再生中の曲情報を取得し、
 X (旧Twitter) への投稿を支援するデスクトップアプリケーションです。
+
 投稿文は自動生成されますが、投稿前に自由に編集できます。
 
 ## Features
