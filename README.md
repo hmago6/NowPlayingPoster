@@ -102,10 +102,3 @@ This application uses the following open-source software:
 * pywin32
 * Tkinter
 * Pillow
-  
-# NowPlayingPoster runtime files
-state.json
-setting.json
-current_tweet.txt
-current_artwork.jpg
-current_artwork.png
