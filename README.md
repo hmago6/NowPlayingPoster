@@ -1,5 +1,8 @@
 # NowPlayingPoster
 
+![Release](https://img.shields.io/github/v/release/hmago6/NowPlayingPoster)
+![License](https://img.shields.io/github/license/hmago6/NowPlayingPoster)
+
 <img width="559" height="224" alt="image" src="https://github.com/user-attachments/assets/56def44d-0fdd-4653-a825-11ca46c05365" />
 
 NowPlaying Poster は、Windows版 iTunes の現在再生中の曲情報を取得し、
