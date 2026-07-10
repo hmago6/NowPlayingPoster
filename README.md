@@ -1,10 +1,13 @@
 # NowPlayingPoster
 
+<img width="559" height="224" alt="image" src="https://github.com/user-attachments/assets/56def44d-0fdd-4653-a825-11ca46c05365" />
+
 NowPlaying Poster は、Windows版 iTunes の現在再生中の曲情報を取得し、
 アルバムアートワークと投稿文を表示しながら、
 X (旧Twitter) への投稿を支援するデスクトップアプリケーションです。
 
 投稿文は自動生成されますが、投稿前に自由に編集できます。
+
 
 ## Features
 
