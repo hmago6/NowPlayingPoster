@@ -64,15 +64,15 @@ python -m pip install -r requirements.txt
 
 ## Usage
 
+```bash
+python NowPlayingPoster.py
+```
+
 1. Windows版 iTunes を起動します。
 2. 曲を再生します。
 3. 投稿文が自動生成されます。
 4. 必要に応じて投稿文を自由に編集します。
 5. 「Xへ投稿」を押します。
-   
-```bash
-python NowPlayingPoster.py
-```
 
 ## Release
 
