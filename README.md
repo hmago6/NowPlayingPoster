@@ -74,7 +74,7 @@ python -m pip install -r requirements.txt
 python NowPlayingPoster.py
 ```
 
-### Release
+## Release
 
 最新版は Releases からダウンロードできます。
 
